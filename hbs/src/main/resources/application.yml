@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: hbs
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cloud:
+    config:
+      enabled: false
+
+server:
+  port: 8081
