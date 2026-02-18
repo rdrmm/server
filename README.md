@@ -42,3 +42,15 @@ docker-compose up --build
 This will start all services: config-server on port 8888, redis on 6379, postgres on 5432, hbs on 8081, hbw on 8082.
 
 To test HBS, send a POST request to `http://localhost:8081/api/heartbeat` with header `Authorization: Bearer valid-token` and JSON body as described.
+
+
+curl -X POST http://localhost:8081/api/heartbeat -H "Authorization: Bearer valid-token" -H "Content-Type: application/json" -d '{"agentUuid":"test-uuid","hostname":"test-host","cpu":"50%","mem":"30%","disk":{"C:":"20%","D:":"10%"}}'
+
+
+cd /workspaces/server && docker-compose exec redis redis-cli keys "heartbeat:*"
+
+
+cd /workspaces/server && docker-compose exec redis redis-cli get "heartbeat:test-uuid"
+
+
+cd /workspaces/server && docker-compose exec postgres psql -U user -d rdrmm -c "SELECT * FROM heartbeats;"
