@@ -1,6 +1,8 @@
 package com.rdrmm.hbw;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -20,9 +22,9 @@ public class Heartbeat {
 
     private String mem;
 
-    @Convert(converter = JsonConverter.class)
+    @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, String> disk;
+    private String diskJson;
 
     private LocalDateTime timestamp;
 
@@ -66,12 +68,12 @@ public class Heartbeat {
         this.mem = mem;
     }
 
-    public Map<String, String> getDisk() {
-        return disk;
+    public String getDiskJson() {
+        return diskJson;
     }
 
-    public void setDisk(Map<String, String> disk) {
-        this.disk = disk;
+    public void setDiskJson(String diskJson) {
+        this.diskJson = diskJson;
     }
 
     public LocalDateTime getTimestamp() {

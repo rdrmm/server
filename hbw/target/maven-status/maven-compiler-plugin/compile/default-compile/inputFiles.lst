@@ -1,6 +1,5 @@
 /workspaces/server/hbw/src/main/java/com/rdrmm/hbw/HeartbeatPayload.java
 /workspaces/server/hbw/src/main/java/com/rdrmm/hbw/HbwApplication.java
-/workspaces/server/hbw/src/main/java/com/rdrmm/hbw/JsonConverter.java
 /workspaces/server/hbw/src/main/java/com/rdrmm/hbw/HeartbeatService.java
 /workspaces/server/hbw/src/main/java/com/rdrmm/hbw/HeartbeatRepository.java
 /workspaces/server/hbw/src/main/java/com/rdrmm/hbw/Heartbeat.java

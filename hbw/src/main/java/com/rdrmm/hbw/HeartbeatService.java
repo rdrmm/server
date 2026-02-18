@@ -31,7 +31,7 @@ public class HeartbeatService {
                 heartbeat.setHostname(payload.getHostname());
                 heartbeat.setCpu(payload.getCpu());
                 heartbeat.setMem(payload.getMem());
-                heartbeat.setDisk(payload.getDisk());
+                heartbeat.setDiskJson(objectMapper.writeValueAsString(payload.getDisk()));
                 heartbeat.setTimestamp(LocalDateTime.now());
                 heartbeatRepository.save(heartbeat);
                 redisTemplate.delete(key);
