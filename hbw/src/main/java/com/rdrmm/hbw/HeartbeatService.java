@@ -29,8 +29,8 @@ public class HeartbeatService {
                 Heartbeat heartbeat = new Heartbeat();
                 heartbeat.setAgentUuid(payload.getAgentUuid());
                 heartbeat.setHostname(payload.getHostname());
-                heartbeat.setCpu(payload.getCpu());
-                heartbeat.setMem(payload.getMem());
+                heartbeat.setCpu(Integer.parseInt(payload.getCpu().replace("%", "")));
+                heartbeat.setMem(Integer.parseInt(payload.getMem().replace("%", "")));
                 heartbeat.setDiskJson(objectMapper.writeValueAsString(payload.getDisk()));
                 heartbeat.setTimestamp(LocalDateTime.now());
                 heartbeatRepository.save(heartbeat);

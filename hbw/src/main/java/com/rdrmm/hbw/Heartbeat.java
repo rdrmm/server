@@ -11,30 +11,20 @@ import java.util.Map;
 public class Heartbeat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String agentUuid;
 
     private String hostname;
 
-    private String cpu;
+    @Column(columnDefinition = "SMALLINT")
+    private Integer cpu;
 
-    private String mem;
+    @Column(columnDefinition = "SMALLINT")
+    private Integer mem;
 
-    @Type(JsonBinaryType.class)
-    @Column(columnDefinition = "jsonb")
+    @Column(length = 255)
     private String diskJson;
 
     private LocalDateTime timestamp;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getAgentUuid() {
         return agentUuid;
@@ -52,19 +42,19 @@ public class Heartbeat {
         this.hostname = hostname;
     }
 
-    public String getCpu() {
+    public Integer getCpu() {
         return cpu;
     }
 
-    public void setCpu(String cpu) {
+    public void setCpu(Integer cpu) {
         this.cpu = cpu;
     }
 
-    public String getMem() {
+    public Integer getMem() {
         return mem;
     }
 
-    public void setMem(String mem) {
+    public void setMem(Integer mem) {
         this.mem = mem;
     }
 

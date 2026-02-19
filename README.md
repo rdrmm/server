@@ -31,6 +31,10 @@ commit the heartbeat payload to redis.
 Heartbeat Writer, HBW for short, is a Spring microserve who reads the last
 minute's heartbeats from redis and batch writes them to postgresql.
 
+## UI
+Web UI built with FastAPI and Jinja2 templates to display heartbeat data.
+Provides a simple dashboard to view agent heartbeats.
+
 ## Running the Services
 
 To run the development environment, use Docker Compose:
@@ -39,12 +43,12 @@ To run the development environment, use Docker Compose:
 docker-compose up --build
 ```
 
-This will start all services: config-server on port 8888, redis on 6379, postgres on 5432, hbs on 8081, hbw on 8082.
+This will start all services: config-server on port 8888, redis on 6379, postgres on 5432, hbs on 8081, hbw on 8082, ui on 8000.
 
 To test HBS, send a POST request to `http://localhost:8081/api/heartbeat` with header `Authorization: Bearer valid-token` and JSON body as described.
 
 
-curl -X POST http://localhost:8081/api/heartbeat -H "Authorization: Bearer valid-token" -H "Content-Type: application/json" -d '{"agentUuid":"test-uuid","hostname":"test-host","cpu":"50%","mem":"30%","disk":{"C:":"20%","D:":"10%"}}'
+curl -X POST http://localhost:8081/api/heartbeat -H "Authorization: Bearer valid-token" -H "Content-Type: application/json" -d '{"agentUuid":"test-uuid-2","hostname":"test-host","cpu":"5%","mem":"60%","disk":{"C:":"20%","D:":"10%"}}'
 
 
 cd /workspaces/server && docker-compose exec redis redis-cli keys "heartbeat:*"
@@ -54,3 +58,7 @@ cd /workspaces/server && docker-compose exec redis redis-cli get "heartbeat:test
 
 
 cd /workspaces/server && docker-compose exec postgres psql -U user -d rdrmm -c "SELECT * FROM heartbeats;"
+
+
+DESTROY HEARTBEAT TABLE:
+cd /workspaces/server && docker-compose exec postgres psql -U user -d rdrmm -c "DELETE FROM heartbeats;"

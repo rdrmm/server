@@ -1,5 +1,4 @@
-version: '3.8'
-
+---
 services:
   config-server:
     build: ./config-server
@@ -35,4 +34,11 @@ services:
     depends_on:
       - config-server
       - redis
+      - postgres
+
+  ui:
+    build: ./ui
+    ports:
+      - "8000:8000"
+    depends_on:
       - postgres
