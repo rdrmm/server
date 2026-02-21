@@ -12,24 +12,26 @@ is provided to quickly spin up a development environment.
 Config Server is a Spring Cloud Config Server that provides centralized configuration
 for all microservices in the rdRMM infrastructure.
 
-## Heartbeat Sensor (HBS)
-Heartbeat Sensor, HBS for short, is a Spring microservice whose only purpose
-in life is to receive heartbeat packets from agents then write these to redis.
-HBS listens over http for a packet bearing a simple auth token in its header,
-and having a body that resembles:
-{
-"agent_uuid": "UUID",
-"hostname": "",
-"cpu":"percent utilized",
-"mem":"percent utilized",
-"disk":"percent utilized each drive"
-}
-upon receiving the payload and authenticating the token the spring server will
-commit the heartbeat payload to redis.
+## Heartbeat Service
+The Heartbeat Service is a unified Spring microservice that handles both receiving and processing heartbeat data from agents. It combines the functionality of the previous Heartbeat Sensor (HBS) and Heartbeat Writer (HBW) into a single application.
 
-## Heartbeat Writer (HBW)
-Heartbeat Writer, HBW for short, is a Spring microserve who reads the last
-minute's heartbeats from redis and batch writes them to postgresql.
+### Functionality
+The Heartbeat Service:
+1. **Receives heartbeat packets** from agents over HTTP POST requests to `/api/heartbeat`
+   - Requires a bearer token in the Authorization header
+   - Accepts JSON payloads with agent metrics (UUID, hostname, CPU, memory, disk usage)
+   - Temporarily stores heartbeats in Redis
+
+2. **Periodically writes heartbeats** from Redis to PostgreSQL
+   - Runs every 60 seconds
+   - Transforms Redis data and persists to the heartbeats table
+   - Cleans up processed entries from Redis
+
+### Configuration
+- Listens on port 8080
+- Integrates with Spring Cloud Config Server for centralized configuration
+- Uses Redis for temporary heartbeat storage
+- Uses PostgreSQL for persistent storage
 
 ## UI
 Web UI built with FastAPI and Jinja2 templates to display heartbeat data.
@@ -43,22 +45,14 @@ To run the development environment, use Docker Compose:
 docker-compose up --build
 ```
 
-This will start all services: config-server on port 8888, redis on 6379, postgres on 5432, hbs on 8081, hbw on 8082, ui on 8000.
+This will start all services: config-server on port 8888, redis on 6379, postgres on 5432, heartbeat on 8080, and ui on 8000.
 
-To test HBS, send a POST request to `http://localhost:8081/api/heartbeat` with header `Authorization: Bearer valid-token` and JSON body as described.
+To test the Heartbeat Service, send a POST request to `http://localhost:8080/api/heartbeat` with header `Authorization: Bearer valid-token` and JSON body as described above.
 
-
-curl -X POST http://localhost:8081/api/heartbeat -H "Authorization: Bearer valid-token" -H "Content-Type: application/json" -d '{"agentUuid":"test-uuid-2","hostname":"test-host","cpu":"5%","mem":"60%","disk":{"C:":"20%","D:":"10%"}}'
-
-
-cd /workspaces/server && docker-compose exec redis redis-cli keys "heartbeat:*"
-
-
-cd /workspaces/server && docker-compose exec redis redis-cli get "heartbeat:test-uuid"
-
-
-cd /workspaces/server && docker-compose exec postgres psql -U user -d rdrmm -c "SELECT * FROM heartbeats;"
-
-
-DESTROY HEARTBEAT TABLE:
-cd /workspaces/server && docker-compose exec postgres psql -U user -d rdrmm -c "DELETE FROM heartbeats;"
+Example:
+```bash
+curl -X POST http://localhost:8080/api/heartbeat \
+  -H "Authorization: Bearer valid-token" \
+  -H "Content-Type: application/json" \
+  -d '{"agentUuid":"test-uuid-1","hostname":"test-host","cpu":"5%","mem":"60%","disk":{"C:":"20%","D:":"10%"}}'
+```

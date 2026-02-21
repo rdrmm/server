@@ -7,6 +7,7 @@ RUN mvn clean package -DskipTests
 
 # Run stage
 FROM eclipse-temurin:17-jre-alpine
+RUN apk --no-cache add curl
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8888
