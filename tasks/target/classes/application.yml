@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: tasks
+  config:
+    import: optional:configserver:http://config-server:8888
+  jpa:
+    show-sql: false
+
+server:
+  port: 8081
