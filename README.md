@@ -1,5 +1,5 @@
 # server
-Server components of rdRMM infrastructure with which agents communicate with.
+Server components of rdRMM infrastructure with which agents communicate.
 
 ## Repository Structure and project infrastructure
 This 'server' repository is used to organize multiple components each within
@@ -9,18 +9,20 @@ is provided to quickly spin up a development environment.
 ### Repository Contents
 
 ## Config Server
-Config Server is a Spring Cloud Config Server that provides centralized configuration
-for all microservices in the rdRMM infrastructure.
+Config Server is a Spring Cloud Config Server that provides centralized
+configuration for all microservices in the rdRMM infrastructure.
 
 ## Heartbeat Service
-The Heartbeat Service is a unified Spring microservice that handles both receiving and processing heartbeat data from agents. It combines the functionality of the previous Heartbeat Sensor (HBS) and Heartbeat Writer (HBW) into a single application.
+The Heartbeat Service is a Spring microservice that handles both receiving and
+processing heartbeat data from agents.
 
 ### Functionality
 The Heartbeat Service:
-1. **Receives heartbeat packets** from agents over HTTP POST requests to `/api/heartbeat`
+1. **Receives heartbeat packets** from via POST requests to `/api/heartbeat`
    - Requires a bearer token in the Authorization header
    - Accepts JSON payloads with agent metrics (UUID, hostname, CPU, memory, disk usage)
    - Temporarily stores heartbeats in Redis
+   - Upon validating agent identity respond with pending task number and url
 
 2. **Periodically writes heartbeats** from Redis to PostgreSQL
    - Runs every 60 seconds
@@ -38,6 +40,7 @@ The Tasks Service is a Spring microservice that manages task assignments for age
 
 ### Functionality
 The Tasks Service manages the association between agents and task URLs:
+## API Endpoints
 1. **Submit task assignments** via `POST /api/tasks`
    - Maps an agentUuid to a taskUrl
    - Stores bidirectional mappings for quick lookups
